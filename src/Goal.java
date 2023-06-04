@@ -3,6 +3,7 @@ public class Goal {
         private int id;
         private int minute;
         private Player scorer;
+        private Team teamScore;
 
         public Goal(int minute, Player scorer) {
             idCounter++;
@@ -10,4 +11,8 @@ public class Goal {
             this.minute = minute;
             this.scorer = scorer;
         }
+
+    public Player getScorer() {
+        return scorer;
+    }
 }

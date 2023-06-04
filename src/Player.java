@@ -27,4 +27,8 @@ public class Player {
         this.firstName = FIRST_NAMES[random.nextInt(FIRST_NAMES.length)];
         this.lastName = LAST_NAMES[random.nextInt(LAST_NAMES.length)];
     }
+
+    public int getId() {
+        return id;
+    }
 }

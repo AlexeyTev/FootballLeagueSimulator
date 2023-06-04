@@ -27,25 +27,37 @@ public class Team {
 
     private String extractNameFromCsv() {
         String csvFilePath = "src/resources/team_names.csv";
-        String teamName="";
+        List<String> teamNames = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length > 0) {
-                    if (data.length==Constants.AMOUNT_OF_TEAMS) {
-                        teamName = data[this.id - 1];
-                    }else System.out.println("There are not enought teams to build a league");
-                }
-            }
+            teamNames = br.lines()
+                    .map(line -> line.split(","))
+                    .filter(data -> data.length == Constants.AMOUNT_OF_TEAMS)
+                    .findFirst()
+                    .map(data -> List.of(data))
+                    .orElseGet(ArrayList::new);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return teamName;
+        if (teamNames.size() < Constants.AMOUNT_OF_TEAMS) {
+            System.out.println("There are not enough teams to build a league");
+        }
+
+        return teamNames.get(id - 1);
     }
 
     public String getName() {
         return this.name;
+    }
+    public int getOpposingTeam (){
+        return this.id + Constants.AMOUNT_OF_TEAMS/2;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+    public Player getScoringPlayer (int num){
+        return this.players.get(num);
     }
 }
