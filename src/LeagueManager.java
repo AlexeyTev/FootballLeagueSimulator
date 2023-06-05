@@ -1,22 +1,61 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class LeagueManager {
     //TODO: צריך לעשות את כל המטודות של המשימה
-    List<List<Match>>allMatches;
-    List<Match>currentRound;
-    LeagueManager(List<Match>currentRound){
-        this.currentRound= currentRound;
-        allMatches.add(currentRound);
+    private List<Match>allMatches;
+    private List<Team>allTeams;
+    private List<List<Integer>>goalsByTeamAndPlayer;
+    LeagueManager( List<Team>allTeams,List<List<Integer>>goalsByTeamAndPlayer){
+      this.allMatches=new ArrayList<>();
+      this.allTeams=allTeams;
+      this.goalsByTeamAndPlayer=goalsByTeamAndPlayer;
     }
-    private List<Match> findMatchesByTeam(int teamId) {
-        return allMatches.stream()
-                .flatMap(List::stream)
-                .filter(match -> match.getHomeTeam().getId() == teamId || match.getAwayTeam().getId() == teamId)
+
+    public void updateAllMatches(List<Match>matches) {
+        this.allMatches=matches;
+    }
+    public void updateGoalsByTeamAndPlayer(List<List<Integer>>goalsByTeamAndPlayer) {
+        this.goalsByTeamAndPlayer=goalsByTeamAndPlayer;
+    }
+    public List<Match> findMatchesByTeam(int teamId){
+        List<Match> result = allMatches.stream()
+                .filter(match -> match.matchesId(teamId))
                 .collect(Collectors.toList());
+        return result;
+    }
+    public List<Team> findTopScoringTeams(int n) {
+        List<Team> teams = sortTeamsByGoals();
+        List<Team> result = teams.stream()
+                .sorted(Comparator.comparingInt(Team::getTotalGoals).reversed())
+                .limit(n)
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    private List<Team> sortTeamsByGoals() {
+        List<Team> result = new ArrayList<>(allTeams);
+
+        result.sort(Comparator.comparingInt(Team::getTotalGoals).reversed());
+
+        return result;
+    }
+    public List<Player> findPlayersWithAtLeastNGoals(int n){
+        List<Player>result = new ArrayList<>();
+        for (int i = 0 ; i < Constants.AMOUNT_OF_TEAMS;i++){
+            for (int j = 0 ; j<Constants.PLAYERS_IN_TEAM;j++){
+                if (this.goalsByTeamAndPlayer.get(i).get(j)>=n){
+                    result.add(allTeams.get(i).getScoringPlayer(j));
+                }
+            }
+        }
+        return result;
     }
 
 }

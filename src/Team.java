@@ -9,12 +9,16 @@ public class Team {
     private int id;
     private String name;
     private List<Player>players;
+    private int totalGoals;
+
 
     Team (){
         idCounter++;
         this.id = idCounter;
         this.name = extractNameFromCsv();
         this.players=getPlayers();
+        this.totalGoals=0;
+
     }
 
     private List<Player> getPlayers() {
@@ -50,14 +54,18 @@ public class Team {
     public String getName() {
         return this.name;
     }
-    public int getOpposingTeam (){
-        return this.id + Constants.AMOUNT_OF_TEAMS/2;
-    }
 
     public int getId() {
         return this.id;
     }
     public Player getScoringPlayer (int num){
         return this.players.get(num);
+    }
+    public void updateGoals(){
+        this.totalGoals++;
+    }
+
+    public int getTotalGoals() {
+        return totalGoals;
     }
 }

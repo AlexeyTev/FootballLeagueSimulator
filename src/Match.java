@@ -41,11 +41,10 @@ public class Match extends Thread{
         super.run();
         System.out.println(this.id + ")" +homeTeam.getName() + " vs " + awayTeam.getName() );
         int numGoals = generateRandomNumberOfGoals();
-
         this.goals = IntStream.range(0, numGoals)
                 .mapToObj(i -> new Goal(generateRandomTime(), generateRandomScorerFromTeam()))
                 .collect(Collectors.toList());
-        for (int i = Constants.COUNTDOWN; i >= 0; i--) {
+        for (int i = Constants.COUNTDOWN; i > 0; i--) {
             System.out.println(i);
             try {
                 Thread.sleep(1000);
@@ -53,11 +52,16 @@ public class Match extends Thread{
                 e.printStackTrace();
             }
         }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     private int generateRandomNumberOfGoals (){
         return random.nextInt(0, Constants.MAX_NUM_OF_GOALS_IN_MATCH+1);
     }
-    private Player generateRandomScorerFromTeam (){
+    private  Player generateRandomScorerFromTeam (){
         int whatTeamScores = random.nextInt(Constants.HOME_TEAM,Constants.AWAY_TEAM+1);
         if (whatTeamScores==Constants.HOME_TEAM){
             this.homeTeamScore++;
@@ -95,5 +99,8 @@ public class Match extends Thread{
 
     public List<Goal> getGoals() {
         return goals;
+    }
+    public  boolean matchesId(int id){
+        return this.homeTeam.getId()==id || this.awayTeam.getTotalGoals()==id;
     }
 }
