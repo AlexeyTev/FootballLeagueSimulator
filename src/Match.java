@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Match extends Thread{
-   private Random random = new Random();
+    private Random random = new Random();
     private static int idCounter=0;
     private int id;
     private Team homeTeam;
@@ -44,8 +44,9 @@ public class Match extends Thread{
         this.goals = IntStream.range(0, numGoals)
                 .mapToObj(i -> new Goal(generateRandomTime(), generateRandomScorerFromTeam()))
                 .collect(Collectors.toList());
+        System.out.println(Constants.STRT_MSG);
         for (int i = Constants.COUNTDOWN; i > 0; i--) {
-            System.out.println(i);
+            System.out.println("     " +i);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -12,10 +9,12 @@ public class LeagueManager {
     private List<Match>allMatches;
     private List<Team>allTeams;
     private List<List<Integer>>goalsByTeamAndPlayer;
-    LeagueManager( List<Team>allTeams,List<List<Integer>>goalsByTeamAndPlayer){
+    private List<Integer>location;
+    LeagueManager(List<Team>allTeams, List<List<Integer>>goalsByTeamAndPlayer){
       this.allMatches=new ArrayList<>();
       this.allTeams=allTeams;
       this.goalsByTeamAndPlayer=goalsByTeamAndPlayer;
+
     }
 
     public void updateAllMatches(List<Match>matches) {
@@ -23,6 +22,9 @@ public class LeagueManager {
     }
     public void updateGoalsByTeamAndPlayer(List<List<Integer>>goalsByTeamAndPlayer) {
         this.goalsByTeamAndPlayer=goalsByTeamAndPlayer;
+    }
+    public void updateLocation(List<Integer>location){
+        this.location=location;
     }
     public List<Match> findMatchesByTeam(int teamId){
         List<Match> result = allMatches.stream()
@@ -56,6 +58,9 @@ public class LeagueManager {
             }
         }
         return result;
+    }
+    public  Team getTeamByPosition(int position){
+        return allTeams.get(location.get(position));
     }
 
 }

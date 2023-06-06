@@ -10,16 +10,12 @@ public class League {
     private List<Match>allMatches;
     private List<List<Integer>>goalsByTeamAndPlayer;
     private HashMap<Integer,Integer> scoreTable;
-
+    private   LeagueManager lm;
     public League() {
-        this.allMatches = new ArrayList<>();
-        this.teams = createTeams();
-        createGoalsByTeamAndPlayer();
-        LeagueManager lm = new LeagueManager(teams,goalsByTeamAndPlayer);
+        leagueStartingActions();
         int numberOfTeams = Constants.AMOUNT_OF_TEAMS;
-        resetScoreTable();
+        List<Team> roundTeams = new ArrayList<>(teams);
         for (int round = 1; round <= Constants.AMOUNT_OF_TEAMS-1; round++) {
-            List<Team> roundTeams = new ArrayList<>(teams);
 
             for (int i = 0; i < numberOfTeams / 2; i++) {
                 Team homeTeam = roundTeams.get(i);
@@ -33,22 +29,39 @@ public class League {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                match.setFinalResult();
-                updateGoalsByTeamAndPlayer(match);
-                updateScoreTable(match);
-                allMatches.add(match);
-
-
+                matchFinishedAction(match);
             }
-            sortAndPrintScoreTable();
-            lm.updateAllMatches(this.allMatches);
-            lm.updateGoalsByTeamAndPlayer(this.goalsByTeamAndPlayer);
-            choseOptionFromLm(lm);
-            roundTeams.add(1, roundTeams.remove(numberOfTeams - 1));
+            roundFinishedAction(lm);
+            Team firstTeam = roundTeams.remove(1);
+            roundTeams.add(firstTeam);
         }
+    }
 
+    private void leagueStartingActions() {
+        this.allMatches = new ArrayList<>();
+        this.teams = createTeams();
+        createGoalsByTeamAndPlayer();
+        lm = new LeagueManager(teams,goalsByTeamAndPlayer);
+        resetScoreTable();
+    }
+
+    private void matchFinishedAction(Match match) {
+        match.setFinalResult();
+        updateGoalsByTeamAndPlayer(match);
+        updateScoreTable(match);
+        allMatches.add(match);
 
     }
+
+    private void roundFinishedAction(LeagueManager lm) {
+        sortAndPrintScoreTable();
+        lm.updateAllMatches(this.allMatches);
+        lm.updateGoalsByTeamAndPlayer(this.goalsByTeamAndPlayer);
+        choseOptionFromLm(lm);
+    }
+
+
+
 
     private void resetScoreTable() {
         this.scoreTable = new HashMap<>();
@@ -58,37 +71,48 @@ public class League {
     }
 
     private void choseOptionFromLm(LeagueManager lm) {
-
+        int choice=Constants.LM_OPT_NULL;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Options:\n " +
-                "1) find matches by team id\n" +
-                "2)find top scoring teams\n" +
-                "3)find player with at least n goals\n" +
-                "9)NEXT ROUND!!!");
-        int choice = scanner.nextInt();
-        switch (choice){
-            case 1 -> {
-                System.out.println("Enter team id");
-                int id = scanner.nextInt();
-                if (id>=1 && id <=Constants.AMOUNT_OF_TEAMS){
-                lm.findMatchesByTeam(id);
-            }else choseOptionFromLm(lm);
-        }
-        case 2-> {
-            System.out.println("Enter amount of teams");
-            int n = scanner.nextInt();
-            if (n<=Constants.AMOUNT_OF_TEAMS){
-                lm.findTopScoringTeams(n);
-            }else choseOptionFromLm(lm);
-            }
-            case 3-> {
-                System.out.println("Enter amount of minimum goals");
-                int n = scanner.nextInt();
-                if (n>=0){
-                    lm.findPlayersWithAtLeastNGoals(n);
+        while (choice!=Constants.LM_OPT_EXIT) {
+            System.out.println(Constants.LM_STRING_OUTPUT);
+            choice = scanner.nextInt();
+            switch (choice) {
+                case Constants.LM_OPT_1 -> {
+                    System.out.println("Enter team id");
+                    int id = scanner.nextInt();
+                    if (id >= 1 && id <= Constants.AMOUNT_OF_TEAMS) {
+                        lm.findMatchesByTeam(id);
+                    } else System.out.println("No such team");
+                }
+                case Constants.LM_OPT_2 -> {
+                    System.out.println("Enter amount of teams");
+                    int n = scanner.nextInt();
+                    if (n <= Constants.AMOUNT_OF_TEAMS) {
+                        lm.findTopScoringTeams(n);
+                    } else System.out.println("To many teams (Only " + Constants.AMOUNT_OF_TEAMS + ") Teams are in the league");
+                }
+                case Constants.LM_OPT_3 -> {
+                    System.out.println("Enter amount of minimum goals");
+                    int n = scanner.nextInt();
+                    if (n >= 0) {
+                        lm.findPlayersWithAtLeastNGoals(n);
+                    }else System.out.println("number must be bigger than 0");
+                }
+                case Constants.LM_OPT_4 -> {
+                    System.out.println("Enter the position in the table");
+                    int position = scanner.nextInt();
+                    if (position - 1 >= 0 && position - 1 < Constants.AMOUNT_OF_TEAMS) {
+                        Team result = lm.getTeamByPosition(position - 1);
+                        System.out.println("The team in " + position + " position is:" + result.getName());
+                    }else System.out.println("No such position in the table");
                 }
             }
-            case 9-> System.out.println("Starting next round\n\n");
+        }
+        System.out.println(Constants.KEEP_GOING);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -133,6 +157,7 @@ public class League {
             if (!added) {
                 sorted.add(currentTeamIndex);
             }
+            lm.updateLocation(sorted);
         }
 
 
@@ -163,19 +188,18 @@ public class League {
 
     private synchronized void updateGoalsByTeamAndPlayer(Match match){
         if (match.getGoals().size()>0 && match.getGoals()!=null){
-           for (int i = 0 ; i < match.getGoals().size();i++){
-               int teamIndex = (match.getGoals().get(i).getScorer().getId()-1)/Constants.PLAYERS_IN_TEAM;
-               int playerIndex = (match.getGoals().get(i).getScorer().getId()-1)%Constants.PLAYERS_IN_TEAM;
-                   List <Integer> temp = goalsByTeamAndPlayer.get(teamIndex);
-                   temp.set(playerIndex, temp.get(playerIndex)+1);
-                   goalsByTeamAndPlayer.set(teamIndex,temp);
-                   teams.get(teamIndex).updateGoals();
-           }
+            for (int i = 0 ; i < match.getGoals().size();i++){
+                int teamIndex = (match.getGoals().get(i).getScorer().getId()-1)/Constants.PLAYERS_IN_TEAM;
+                int playerIndex = (match.getGoals().get(i).getScorer().getId()-1)%Constants.PLAYERS_IN_TEAM;
+                List <Integer> temp = goalsByTeamAndPlayer.get(teamIndex);
+                temp.set(playerIndex, temp.get(playerIndex)+1);
+                goalsByTeamAndPlayer.set(teamIndex,temp);
+                teams.get(teamIndex).updateGoals();
+            }
         }
         System.out.println(match);
     }
 
 }
-
 
 
