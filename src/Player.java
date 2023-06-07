@@ -31,4 +31,8 @@ public class Player {
     public int getId() {
         return id;
     }
+
+    public String toString() {
+      return "ID " + this.id +" :" + this.firstName + " " + this.lastName+"\n";
+    }
 }

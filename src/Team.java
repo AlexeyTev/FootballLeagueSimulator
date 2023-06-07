@@ -11,7 +11,6 @@ public class Team {
     private List<Player>players;
     private int totalGoals;
 
-
     Team (){
         idCounter++;
         this.id = idCounter;
@@ -24,7 +23,8 @@ public class Team {
     private List<Player> getPlayers() {
         List<Player>playerList = new ArrayList<>();
         for (int i = 0 ; i <Constants.PLAYERS_IN_TEAM; i ++){
-            playerList.add(new Player());
+            Player newPlayer = new Player();
+            playerList.add(newPlayer);
         }
         return playerList;
     }
@@ -38,7 +38,7 @@ public class Team {
                     .map(line -> line.split(","))
                     .filter(data -> data.length == Constants.AMOUNT_OF_TEAMS)
                     .findFirst()
-                    .map(data -> List.of(data))
+                    .map(List::of)
                     .orElseGet(ArrayList::new);
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,5 +67,13 @@ public class Team {
 
     public int getTotalGoals() {
         return totalGoals;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "ID " + id +
+                ":'" + name + '\'' +
+                " totalGoals:" + totalGoals+"\n";
     }
 }

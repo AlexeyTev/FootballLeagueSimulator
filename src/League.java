@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public class League {
 
-    Random random = new Random();
+
     private List<Team> teams;
     private List<Match>allMatches;
     private List<List<Integer>>goalsByTeamAndPlayer;
@@ -15,26 +15,28 @@ public class League {
         leagueStartingActions();
         int numberOfTeams = Constants.AMOUNT_OF_TEAMS;
         List<Team> roundTeams = new ArrayList<>(teams);
-        for (int round = 1; round <= Constants.AMOUNT_OF_TEAMS-1; round++) {
+        IntStream.rangeClosed(1, Constants.AMOUNT_OF_TEAMS - 1)
+                .forEach(round -> {
+                    IntStream.range(0, numberOfTeams / 2)
+                            .mapToObj(i -> {
+                                Team homeTeam = roundTeams.get(i);
+                                Team awayTeam = roundTeams.get(numberOfTeams - 1 - i);
+                                return new Match(homeTeam, awayTeam);
+                            })
+                            .peek(Match::start)
+                            .forEach(match -> {
+                                try {
+                                    Thread.sleep(Constants.COUNTDOWN * 1000 + 50);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                matchFinishedAction(match);
+                            });
 
-            for (int i = 0; i < numberOfTeams / 2; i++) {
-                Team homeTeam = roundTeams.get(i);
-                Team awayTeam = roundTeams.get(numberOfTeams - 1 - i);
-
-                Match match = new Match(homeTeam, awayTeam);
-                match.start();
-
-                try {
-                    Thread.sleep(Constants.COUNTDOWN * 1000 + 50);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                matchFinishedAction(match);
-            }
-            roundFinishedAction(lm);
-            Team firstTeam = roundTeams.remove(1);
-            roundTeams.add(firstTeam);
-        }
+                    roundFinishedAction(lm);
+                    Team firstTeam = roundTeams.remove(1);
+                    roundTeams.add(firstTeam);
+                });
     }
 
     private void leagueStartingActions() {
@@ -73,6 +75,7 @@ public class League {
     private void choseOptionFromLm(LeagueManager lm) {
         int choice=Constants.LM_OPT_NULL;
         Scanner scanner = new Scanner(System.in);
+        Map<Integer,Integer>topScorers;
         while (choice!=Constants.LM_OPT_EXIT) {
             System.out.println(Constants.LM_STRING_OUTPUT);
             choice = scanner.nextInt();
@@ -81,21 +84,24 @@ public class League {
                     System.out.println("Enter team id");
                     int id = scanner.nextInt();
                     if (id >= 1 && id <= Constants.AMOUNT_OF_TEAMS) {
-                        lm.findMatchesByTeam(id);
+                       List<Match> result = lm.findMatchesByTeam(id);
+                        System.out.println(result);
                     } else System.out.println("No such team");
                 }
                 case Constants.LM_OPT_2 -> {
                     System.out.println("Enter amount of teams");
                     int n = scanner.nextInt();
-                    if (n <= Constants.AMOUNT_OF_TEAMS) {
-                        lm.findTopScoringTeams(n);
+                    if (n>=0 &&n <= Constants.AMOUNT_OF_TEAMS) {
+                       List<Team>result = lm.findTopScoringTeams(n);
+                        System.out.println(result);
                     } else System.out.println("To many teams (Only " + Constants.AMOUNT_OF_TEAMS + ") Teams are in the league");
                 }
                 case Constants.LM_OPT_3 -> {
                     System.out.println("Enter amount of minimum goals");
                     int n = scanner.nextInt();
                     if (n >= 0) {
-                        lm.findPlayersWithAtLeastNGoals(n);
+                       List<Player>result = lm.findPlayersWithAtLeastNGoals(n);
+                        System.out.println(result);
                     }else System.out.println("number must be bigger than 0");
                 }
                 case Constants.LM_OPT_4 -> {
@@ -106,6 +112,14 @@ public class League {
                         System.out.println("The team in " + position + " position is:" + result.getName());
                     }else System.out.println("No such position in the table");
                 }
+                case Constants.LM_OPT_5 -> {
+                    System.out.println("Enter the number of highest scoring players");
+                    int n = scanner.nextInt();
+                    if (n>0 && n<=Constants.AMOUNT_OF_TEAMS*Constants.PLAYERS_IN_TEAM){
+                        topScorers = lm.getTopScorers(n);
+                    }else {
+                        System.out.println("To many or less than one players");
+                }}
             }
         }
         System.out.println(Constants.KEEP_GOING);
@@ -161,7 +175,7 @@ public class League {
         }
 
 
-        System.out.println("-----------\nChampions League Round " + allMatches.size()/5 + "  Table\n-----------");
+        System.out.println("-----------\nChampions League Round " + allMatches.size()/Constants.GAMES_PER_ROUND + "  Table\n-----------");
         IntStream.range(0, sorted.size())
                 .forEach(index -> {
                     int integer = sorted.get(index);

@@ -39,7 +39,7 @@ public class Match extends Thread{
     @Override
     public void run() {
         super.run();
-        System.out.println(this.id + ")" +homeTeam.getName() + " vs " + awayTeam.getName() );
+        System.out.println("("+this.id + ")" +homeTeam.getName() + " vs " + awayTeam.getName() );
         int numGoals = generateRandomNumberOfGoals();
         this.goals = IntStream.range(0, numGoals)
                 .mapToObj(i -> new Goal(generateRandomTime(), generateRandomScorerFromTeam()))
@@ -94,14 +94,14 @@ public class Match extends Thread{
         }else if (this.finalResult == Constants.HOME_TEAM){
             winner= homeTeam.getName();
         }
-        return "Final Result: \n"+this.homeTeam.getName() + ", " + this.homeTeamScore + " :: " + this.awayTeam.getName() + ", "+this.awayTeamScore+
+        return "\nMATCH ID ("+this.id+ ") Final result:\n"+this.homeTeam.getName() + ", " + this.homeTeamScore + " :: " + this.awayTeamScore + ", "+this.awayTeam.getName()+
                 "  The winner is: " + winner;
     }
 
     public List<Goal> getGoals() {
         return goals;
     }
-    public  boolean matchesId(int id){
-        return this.homeTeam.getId()==id || this.awayTeam.getTotalGoals()==id;
+    public boolean matchesId(int id){
+        return this.homeTeam.getId()==id || this.awayTeam.getId()==id;
     }
 }

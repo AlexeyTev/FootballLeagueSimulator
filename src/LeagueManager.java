@@ -5,11 +5,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class LeagueManager {
-    //TODO: צריך לעשות את כל המטודות של המשימה
+    //TODO: צריך לתקן את מתודות ,5
     private List<Match>allMatches;
     private List<Team>allTeams;
     private List<List<Integer>>goalsByTeamAndPlayer;
     private List<Integer>location;
+
     LeagueManager(List<Team>allTeams, List<List<Integer>>goalsByTeamAndPlayer){
       this.allMatches=new ArrayList<>();
       this.allTeams=allTeams;
@@ -62,5 +63,43 @@ public class LeagueManager {
     public  Team getTeamByPosition(int position){
         return allTeams.get(location.get(position));
     }
+    public Map<Integer, Integer> getTopScorers(int n) {
+        Map<Integer, Integer> result = new HashMap<>();
+        int max = 0;
+        for (int i = 0; i < this.goalsByTeamAndPlayer.size(); i++) {
+            for (int j = 0; j < Constants.PLAYERS_IN_TEAM; j++) {
+                if (this.goalsByTeamAndPlayer.get(i).get(j) > max) {
+                    max = this.goalsByTeamAndPlayer.get(i).get(j);
+                }
+            }
+        }
+        int counter = 0;
+        List<Integer>keys = new ArrayList<>();
+        while (max > 0 && counter < n) {
+            for (int i = 0; i < this.goalsByTeamAndPlayer.size(); i++) {
+                for (int j = 0; j < Constants.PLAYERS_IN_TEAM; j++) {
+                        if (this.goalsByTeamAndPlayer.get(i).get(j) == max && counter<n) {
+                            int key = (j + (i * 10));
+                            int goals = goalsByTeamAndPlayer.get(i).get(j);
+                            keys.add(key);
+                            result.put(key, goals);
+                            counter++;
+                        }else if (counter>=n){
+                            break;
+                        }
+                    }
+                }
+            if (counter>=n){
+                break;
+            }
+                max--;
+            }
 
-}
+        for (int i = 0 ; i < keys.size();i++){
+            System.out.println("id: " + keys.get(i)+" scored: "+result.get(keys.get(i)));
+        }
+        return result;
+
+    }
+    }
+
