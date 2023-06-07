@@ -10,6 +10,7 @@ public class Team {
     private String name;
     private List<Player>players;
     private int totalGoals;
+    private int goalsAgainst;
 
     Team (){
         idCounter++;
@@ -64,9 +65,15 @@ public class Team {
     public void updateGoals(){
         this.totalGoals++;
     }
+    public void updateGoalsAgainst (int n){
+        this.goalsAgainst+=n;
+    }
 
     public int getTotalGoals() {
         return totalGoals;
+    }
+    public int getGoalDifference(){
+        return this.totalGoals-this.goalsAgainst;
     }
 
     @Override
@@ -74,6 +81,6 @@ public class Team {
         return
                 "ID " + id +
                 ":'" + name + '\'' +
-                " totalGoals:" + totalGoals+"\n";
+                " totalGoals:" + totalGoals+" Goal difference:" +this.getGoalDifference()+"\n";
     }
 }

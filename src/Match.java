@@ -81,6 +81,8 @@ public class Match extends Thread{
         }else if (this.awayTeamScore>this.homeTeamScore){
             this.finalResult=Constants.AWAY_TEAM;
         }
+        this.awayTeam.updateGoalsAgainst(this.homeTeamScore);
+        this.homeTeam.updateGoalsAgainst(this.awayTeamScore);
     }
     public int getFinalResult(){
         return this.finalResult;

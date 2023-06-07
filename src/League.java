@@ -72,6 +72,7 @@ public class League {
         }
     }
 
+
     private void choseOptionFromLm(LeagueManager lm) {
         int choice=Constants.LM_OPT_NULL;
         Scanner scanner = new Scanner(System.in);
@@ -117,6 +118,7 @@ public class League {
                     int n = scanner.nextInt();
                     if (n>0 && n<=Constants.AMOUNT_OF_TEAMS*Constants.PLAYERS_IN_TEAM){
                         topScorers = lm.getTopScorers(n);
+                        System.out.println(topScorers + " size:" +topScorers.size());
                     }else {
                         System.out.println("To many or less than one players");
                 }}
@@ -152,18 +154,20 @@ public class League {
         for (int i = 0; i < this.scoreTable.size(); i++) {
             int currentTeamIndex = i;
             int currentTeamPoints = this.scoreTable.get(currentTeamIndex+1);
-            int currentTeamGoals = this.teams.get(currentTeamIndex).getTotalGoals();
+            int currentTeamGoals = this.teams.get(currentTeamIndex).getGoalDifference();
+            String currentTeamName = this.teams.get(currentTeamIndex).getName();
             boolean added = false;
 
             for (int j = 0; j < sorted.size(); j++) {
                 int sortedTeamIndex = sorted.get(j);
                 int sortedTeamPoints = this.scoreTable.get(sortedTeamIndex+1);
-                int sortedTeamGoals = this.teams.get(sortedTeamIndex).getTotalGoals();
-
+                int sortedTeamGoals = this.teams.get(sortedTeamIndex).getGoalDifference();
+                String sortedTeamName = this.teams.get(sortedTeamIndex).getName();
                 if (currentTeamPoints > sortedTeamPoints ||
-                        (currentTeamPoints == sortedTeamPoints && currentTeamGoals > sortedTeamGoals)) {
+                        (currentTeamPoints == sortedTeamPoints && currentTeamGoals > sortedTeamGoals || currentTeamPoints==sortedTeamPoints && currentTeamGoals==sortedTeamGoals && currentTeamName.compareTo(sortedTeamName)<0)) {
                     sorted.add(j, currentTeamIndex);
                     added = true;
+
                     break;
                 }
             }
@@ -182,8 +186,9 @@ public class League {
                     String name = teams.get(integer).getName();
                     int pts = scoreTable.get(integer + 1);
                     int goals = teams.get(integer).getTotalGoals();
+                    int goalDifference = teams.get(integer).getGoalDifference();
                     int place = index + 1;
-                    System.out.println("|(" + place + ")|" + name + " ," + pts + " pts , " + goals + " goals");
+                    System.out.println("|(" + place + ")|" + name + " ---> " + pts + " pts ---> " + goals + " goals ---> " + goalDifference+ " goal difference");
                 });
 
     }
@@ -213,7 +218,6 @@ public class League {
         }
         System.out.println(match);
     }
-
 }
 
 

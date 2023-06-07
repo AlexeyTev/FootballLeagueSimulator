@@ -3,7 +3,6 @@ public class Goal {
         private int id;
         private int minute;
         private Player scorer;
-        private Team teamScore;
 
         public Goal(int minute, Player scorer) {
             idCounter++;

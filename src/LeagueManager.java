@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class LeagueManager {
-    //TODO: צריך לתקן את מתודות ,5
+    //TODO: צריך להפוך לסטרים
     private List<Match>allMatches;
     private List<Team>allTeams;
     private List<List<Integer>>goalsByTeamAndPlayer;
@@ -73,31 +73,25 @@ public class LeagueManager {
                 }
             }
         }
-        int counter = 0;
-        List<Integer>keys = new ArrayList<>();
-        while (max > 0 && counter < n) {
+
+
+        while (max > 0 && result.size() <= n) {
             for (int i = 0; i < this.goalsByTeamAndPlayer.size(); i++) {
                 for (int j = 0; j < Constants.PLAYERS_IN_TEAM; j++) {
-                        if (this.goalsByTeamAndPlayer.get(i).get(j) == max && counter<n) {
+                        if (this.goalsByTeamAndPlayer.get(i).get(j) == max && result.size()<n) {
                             int key = (j + (i * 10));
                             int goals = goalsByTeamAndPlayer.get(i).get(j);
-                            keys.add(key);
                             result.put(key, goals);
-                            counter++;
-                        }else if (counter>=n){
+                        }else if (result.size()>n){
                             break;
                         }
                     }
                 }
-            if (counter>=n){
+            if (result.size()>=n){
                 break;
             }
                 max--;
             }
-
-        for (int i = 0 ; i < keys.size();i++){
-            System.out.println("id: " + keys.get(i)+" scored: "+result.get(keys.get(i)));
-        }
         return result;
 
     }
