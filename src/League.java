@@ -206,18 +206,20 @@ public class League {
     }
 
     private synchronized void updateGoalsByTeamAndPlayer(Match match){
-        if (match.getGoals().size()>0 && match.getGoals()!=null){
-            for (int i = 0 ; i < match.getGoals().size();i++){
-                int teamIndex = (match.getGoals().get(i).getScorer().getId()-1)/Constants.PLAYERS_IN_TEAM;
-                int playerIndex = (match.getGoals().get(i).getScorer().getId()-1)%Constants.PLAYERS_IN_TEAM;
-                List <Integer> temp = goalsByTeamAndPlayer.get(teamIndex);
-                temp.set(playerIndex, temp.get(playerIndex)+1);
-                goalsByTeamAndPlayer.set(teamIndex,temp);
+        if (match.getGoals() != null && !match.getGoals().isEmpty()) {
+            match.getGoals().forEach(goal -> {
+                int teamIndex = (goal.getScorer().getId() - 1) / Constants.PLAYERS_IN_TEAM;
+                int playerIndex = (goal.getScorer().getId() - 1) % Constants.PLAYERS_IN_TEAM;
+                List<Integer> temp = goalsByTeamAndPlayer.get(teamIndex);
+                temp.set(playerIndex, temp.get(playerIndex) + 1);
+                goalsByTeamAndPlayer.set(teamIndex, temp);
                 teams.get(teamIndex).updateGoals();
-            }
+            });
         }
+
         System.out.println(match);
     }
+
 }
 
 

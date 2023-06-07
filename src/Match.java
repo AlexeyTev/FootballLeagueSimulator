@@ -45,14 +45,17 @@ public class Match extends Thread{
                 .mapToObj(i -> new Goal(generateRandomTime(), generateRandomScorerFromTeam()))
                 .collect(Collectors.toList());
         System.out.println(Constants.STRT_MSG);
-        for (int i = Constants.COUNTDOWN; i > 0; i--) {
-            System.out.println("     " +i);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        IntStream.rangeClosed(1, Constants.COUNTDOWN)
+                .mapToObj(i -> Constants.COUNTDOWN - i + 1)
+                .peek(i -> System.out.println("     " + i))
+                .forEach(i -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

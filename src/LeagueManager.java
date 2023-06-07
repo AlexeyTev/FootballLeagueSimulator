@@ -1,8 +1,5 @@
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class LeagueManager {
     //TODO: צריך להפוך לסטרים
@@ -65,14 +62,10 @@ public class LeagueManager {
     }
     public Map<Integer, Integer> getTopScorers(int n) {
         Map<Integer, Integer> result = new HashMap<>();
-        int max = 0;
-        for (int i = 0; i < this.goalsByTeamAndPlayer.size(); i++) {
-            for (int j = 0; j < Constants.PLAYERS_IN_TEAM; j++) {
-                if (this.goalsByTeamAndPlayer.get(i).get(j) > max) {
-                    max = this.goalsByTeamAndPlayer.get(i).get(j);
-                }
-            }
-        }
+        int max = goalsByTeamAndPlayer.stream()
+                .flatMapToInt(list -> list.stream().mapToInt(Integer::intValue))
+                .max()
+                .orElse(0);
 
 
         while (max > 0 && result.size() <= n) {

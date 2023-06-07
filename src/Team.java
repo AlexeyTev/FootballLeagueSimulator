@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Team {
     private static int idCounter = 0;
@@ -22,12 +24,10 @@ public class Team {
     }
 
     private List<Player> getPlayers() {
-        List<Player>playerList = new ArrayList<>();
-        for (int i = 0 ; i <Constants.PLAYERS_IN_TEAM; i ++){
-            Player newPlayer = new Player();
-            playerList.add(newPlayer);
-        }
-        return playerList;
+        return IntStream.range(0, Constants.PLAYERS_IN_TEAM)
+                .mapToObj(i -> new Player())
+                .collect(Collectors.toList());
+
     }
 
     private String extractNameFromCsv() {
