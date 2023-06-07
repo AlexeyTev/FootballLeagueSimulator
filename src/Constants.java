@@ -6,7 +6,7 @@ public class Constants {
     public static final int HOME_TEAM = 1;
     public static final int AWAY_TEAM = 2;
     public static final int MATCH_LENGTH = 90;
-    public static final int COUNTDOWN = 5;
+    public static final int COUNTDOWN = 10;
     public static final int WIN_PTS = 3;
     public static final int TIE_PTS = 1;
     public static final int TIE = 0;
