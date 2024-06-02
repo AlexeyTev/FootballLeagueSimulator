@@ -1,10 +1,16 @@
-Football League Simulation
-This project simulates a football league consisting of teams, players, and matches. The program reads team names from a teams.csv file, creates Team objects, populates each team with 15 randomly generated players, and simulates a league season with matches between the teams.
-Features
+# Football League Simulation
 
-Read team names from a teams.csv file
-Create Team objects with randomly generated player rosters
-Simulate league matches between teams
-Track goals scored in each match, including the scorer and minute
-Calculate league standings based on points and goal difference
-Provide functionality to retrieve various statistics and rankings
+## Overview
+
+This project is a Java-based simulation of a football league, comprising teams, players, and matches. It allows for the generation of teams with random player rosters, simulates league seasons with matches between the teams, and provides functionality to track match statistics, calculate standings, and retrieve various rankings.
+
+## Features
+
+- **Dynamic Team Creation**: Reads team names from a `teams.csv` file and creates corresponding Team objects.
+- **Random Player Generation**: Populates each team with 15 randomly generated players, ensuring diversity and unpredictability.
+- **League Simulation**: Simulates league matches between teams, tracking goals scored, including scorer details and the minute of the goal.
+- **Standings Calculation**: Calculates league standings based on points earned and goal difference.
+- **Statistics and Rankings**: Provides functionality to retrieve various statistics and rankings, aiding in performance analysis.
+
+
+
